@@ -6,11 +6,8 @@
 			#box-relogio{
 				width:400px;
 				height:400px;
-				
 				margin:10% auto;
-				
 			}
-			
 			#relogio{
 				background:#f9f9f9;
 				border-radius:50%;
@@ -47,7 +44,16 @@
 				position:absolute;
 				top:5px;
 			}
-			
+			#ponteiro-circulo span{
+				position:absolute;
+				top:48.3%;
+				left:-4px;
+				width:13px;
+				height:13px;
+				background:#444;
+				border-radius:50%;
+				border:1px solid rgba(0,0,0,0.1)
+			}
 			#ponteiro-hora span{
 				width:100%;
 				height:41%;
@@ -55,7 +61,6 @@
 				bottom:40%;
 				background:#000;
 			}
-		
 			#ponteiro-minuto span{
 				width:80%;
 				height:50%;
@@ -63,7 +68,6 @@
 				bottom:40%;
 				background:#000;
 			}
-			
 			#ponteiro-segundo span{
 				width:80%;
 				height:55%;
@@ -71,7 +75,10 @@
 				bottom:40%;
 				background:red;
 			}
-			
+			#analogico{
+				position:absolute;
+				top:100%;
+			}
 		</style>
 	</head>
 	<body>
@@ -82,7 +89,7 @@
 		<script type="text/javascript">
 			(function(){
 			
-				var ponteiros = ['hora','minuto','segundo'];
+				var ponteiros = ['hora','minuto','segundo','circulo'];
 				
 				ponteiros.forEach(function(value){
 					var div = document.createElement("DIV");
@@ -93,26 +100,29 @@
 					document.getElementById('relogio').appendChild(div);  
 				});
 					
+		
 				for(var e = 0; e < 360; e+= 6){
+				
 					var div = document.createElement("DIV");
 					div.style = "transform: rotate("+e+"deg)";
-					div.setAttribute('class',"position ponto-marcacao-segundo");
 					var span = document.createElement("SPAN");
+					
+					if(e % 30 == 0){
+						div.setAttribute('class',"position ponto-marcacao-hora-minuto");
+						var a = document.createElement("A");
+						a.innerText = (e/30) || 12;
+						a.style = "transform: rotate("+ (360 - e) +"deg)" ;
+						span.appendChild(a); 
+					}else
+						div.setAttribute('class',"position ponto-marcacao-segundo");
+						
 					div.appendChild(span);  
 					document.getElementById('relogio').appendChild(div);  
 				}
-				for(var e = 0; e < 360; e+= 30){
-					var div = document.createElement("DIV");
-					div.style = "transform: rotate("+e+"deg)";
-					div.setAttribute('class',"position ponto-marcacao-hora-minuto");
-					var span = document.createElement("SPAN");
-					var a = document.createElement("A");
-					a.innerText = (e/30) || 12;
-					a.style = "transform: rotate("+ (360 - e) +"deg)" ;
-					span.appendChild(a); 
-					div.appendChild(span);  
-					document.getElementById('relogio').appendChild(div);  
-				}
+				
+				var h2 = document.createElement("H2");
+				h2.setAttribute('id',"analogico"); 
+				document.getElementById('relogio').appendChild(h2);  
 				
 				function relogioTime()
 				{
@@ -128,8 +138,12 @@
 					document.querySelector('#relogio #ponteiro-hora').style = ('transform:rotate('+ degHora +'deg)');
 					document.querySelector('#relogio #ponteiro-minuto').style = ('transform:rotate('+ degMinuto +'deg)');
 					document.querySelector('#relogio #ponteiro-segundo').style = ('transform:rotate('+ degSegundo +'deg)');
+					
+					document.querySelector('#relogio #analogico').innerText = format00(hora) +':'+ format00(minuto) +':'+ format00(segundo);
 				}
-				 
+				
+				function format00(num) {return parseInt(num) < 10 ? '0'+num : num}
+				
 				relogioTime();
 				
 				setInterval(function(){
